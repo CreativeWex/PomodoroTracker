@@ -1,13 +1,13 @@
-package com.bereznev.studentrecords;
+package com.bereznev.webapp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class StudentRecordsApplication {
+public class FlashCardsApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(StudentRecordsApplication.class, args);
+        SpringApplication.run(FlashCardsApplication.class, args);
     }
 
 }

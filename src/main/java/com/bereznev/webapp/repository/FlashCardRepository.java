@@ -1,13 +1,13 @@
-package com.bereznev.studentrecords.repository;
+package com.bereznev.webapp.repository;
 /*
     =====================================
-    @project StudentRecords
+    @project FlashCards
     @created 06/02/2023    
     @author Bereznev Nikita @CreativeWex
     =====================================
  */
 
-import com.bereznev.studentrecords.model.Student;
+import com.bereznev.webapp.model.FlashCard;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface StudentRepository extends JpaRepository<Student, Long> {}
+public interface FlashCardRepository extends JpaRepository<FlashCard, Long> {}
