@@ -15,7 +15,7 @@ create table tasks
     name text not null unique,
     date date,
     description text,
-    status varchar(10) not null default 'ACTIVE'
+    status varchar(10) default 'ACTIVE' not null
 );
 
 drop table if exists sub_tasks cascade;

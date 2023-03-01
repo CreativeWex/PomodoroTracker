@@ -11,6 +11,7 @@ import com.bereznev.webapp.exception.ResourceNotFoundException;
 import com.bereznev.webapp.exception.TooBigArgumentException;
 import com.bereznev.webapp.model.FlashCard;
 import com.bereznev.webapp.repository.FlashCardRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Random;
 
 @Service
+@Transactional
 public class FlashCardServiceImpl implements FlashCardService {
 
     private final FlashCardRepository flashCardRepository;

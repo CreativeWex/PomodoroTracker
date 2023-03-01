@@ -8,7 +8,7 @@ package com.bereznev.webapp.model;
  */
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -29,11 +29,19 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Size(min = 2, max = 100, message = "Имя должно быть не меньше 2 и не больше 100 символов!")
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
+
+    @Column(name = "date", nullable = false)
     private Date date;
+
+    @Column(name = "description")
     private String description;
+
     @Pattern(regexp = "(FINISHED)|(ACTIVE)")
+    @Column(name = "status", nullable = false, insertable = false, columnDefinition = "ACTIVE")
     private String status;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -13,6 +13,7 @@ import com.bereznev.webapp.model.FlashCard;
 import com.bereznev.webapp.model.Task;
 import com.bereznev.webapp.repository.FlashCardRepository;
 import com.bereznev.webapp.repository.TaskRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Random;
 
 @Service
+@Transactional
 public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;

@@ -9,10 +9,11 @@ package com.bereznev.webapp.controller;
 
 import com.bereznev.webapp.model.Task;
 import com.bereznev.webapp.service.TaskService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -26,15 +27,18 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    @PostMapping("/add")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Task> save(@RequestBody Task task) {
-        return new ResponseEntity<Task>(taskService.save(task), HttpStatus.CREATED);
+    @PostMapping()
+    public String save(@ModelAttribute("task") @Valid Task task, BindingResult bindingResult) {
+        System.out.println(task);
+        if (!bindingResult.hasErrors()) {
+            taskService.save(task);
+        }
+        return "redirect:/api/tasks";
     }
 
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
-    public String getAll(Model model) {
+    public String getAll(@ModelAttribute("task") Task task, Model model) {
         model.addAttribute("tasksList", taskService.getAll());
         return "tasks/getAll";
     }
