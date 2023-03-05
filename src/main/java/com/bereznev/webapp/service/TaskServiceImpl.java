@@ -8,24 +8,21 @@ package com.bereznev.webapp.service;
  */
 
 import com.bereznev.webapp.exception.ResourceNotFoundException;
-import com.bereznev.webapp.exception.TooBigArgumentException;
-import com.bereznev.webapp.model.FlashCard;
 import com.bereznev.webapp.model.Task;
-import com.bereznev.webapp.repository.FlashCardRepository;
 import com.bereznev.webapp.repository.TaskRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 @Service
 @Transactional
 public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
+    private static boolean SORTED = true;
 
     @Autowired
     public TaskServiceImpl(TaskRepository taskRepository) {
@@ -40,6 +37,15 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<Task> getAll() {
         return taskRepository.findAll();
+    }
+
+    @Override
+    public List<Task> getAll(String sortParameter) {
+        SORTED = !SORTED;
+        if (SORTED) {
+            return taskRepository.findAll(Sort.by(Sort.Direction.DESC, sortParameter));
+        }
+        return taskRepository.findAll(Sort.by(Sort.Direction.ASC, sortParameter));
     }
 
     @Override
@@ -76,5 +82,15 @@ public class TaskServiceImpl implements TaskService {
             case ("FINISHED") -> task.setStatus("ACTIVE");
         }
         taskRepository.save(task);
+    }
+
+    @Override
+    public List<Task> getActive() {
+        return null;
+    }
+
+    @Override
+    public List<Task> getFinished() {
+        return null;
     }
 }

@@ -36,10 +36,14 @@
 
     <br>
 
+    Сортировать по:
+    <a th:href="@{'/api/tasks?sort=name'}">Имя</a> <br>
+    <a th:href="@{'/api/tasks?sort=date'}">Дата</a> <br>
+
     <table class="table table-hover">
-        <thead class="thead-dark">
+        <thead class="thead-dark table-dark">
         <tr>
-            <th scope="col">Action</th>
+            <th scope="col">-</th>
             <th scope="col">Name</th>
             <th scope="col">Description</th>
             <th scope="col">Date</th>

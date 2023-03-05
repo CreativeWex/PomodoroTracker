@@ -81,28 +81,28 @@ public class FlashCardServiceImpl implements FlashCardService {
         return randomCards;
     }
 
-    @Override
-    public FlashCard increaseDifficulty(Long id) {
-        FlashCard card = flashCardRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("FlashCard", "Id", id));
-        switch (card.getDifficulty()) {
-            case ("EASY") -> card.setDifficulty("MEDIUM");
-            case ("MEDIUM") -> card.setDifficulty("HARD");
-        }
-
-        flashCardRepository.save(card);
-        return card;
-    }
-
-    @Override
-    public FlashCard decreaseDifficulty(Long id) {
-        FlashCard card = flashCardRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("FlashCard", "Id", id));
-        switch (card.getDifficulty()) {
-            case ("HARD") -> card.setDifficulty("MEDIUM");
-            case ("MEDIUM") -> card.setDifficulty("EASY");
-        }
-
-        flashCardRepository.save(card);
-        return card;
-    }
+//    @Override
+//    public FlashCard increaseDifficulty(Long id) {
+//        FlashCard card = flashCardRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("FlashCard", "Id", id));
+//        switch (card.getDifficulty()) {
+//            case ("EASY") -> card.setDifficulty("MEDIUM");
+//            case ("MEDIUM") -> card.setDifficulty("HARD");
+//        }
+//
+//        flashCardRepository.save(card);
+//        return card;
+//    }
+//
+//    @Override
+//    public FlashCard decreaseDifficulty(Long id) {
+//        FlashCard card = flashCardRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("FlashCard", "Id", id));
+//        switch (card.getDifficulty()) {
+//            case ("HARD") -> card.setDifficulty("MEDIUM");
+//            case ("MEDIUM") -> card.setDifficulty("EASY");
+//        }
+//
+//        flashCardRepository.save(card);
+//        return card;
+//    }
 
 }

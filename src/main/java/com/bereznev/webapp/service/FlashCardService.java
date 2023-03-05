@@ -21,6 +21,4 @@ public interface FlashCardService {
 
     // Business logic
     List<FlashCard> getRandomNCards(int number);
-    FlashCard increaseDifficulty(Long id);
-    FlashCard decreaseDifficulty(Long id);
 }
