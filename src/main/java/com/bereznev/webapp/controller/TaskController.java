@@ -41,11 +41,15 @@ public class TaskController {
     @ResponseStatus(HttpStatus.OK)
     public String getAll(@RequestParam(name = "sort", required = false) Optional<String> sortParameter,
                          @ModelAttribute("task") Task task, Model model) {
-        if (sortParameter.isPresent()) {
-            model.addAttribute("tasksList", taskService.getAll(sortParameter.get()));
-        } else {
+        if (sortParameter.isEmpty()) {
             model.addAttribute("tasksList", taskService.getAll());
+        } else if (sortParameter.get().equals("name")) {
+            model.addAttribute("tasksList", taskService.getAllSortedByName());
+        } else {
+            model.addAttribute("tasksList", taskService.getAllSortedByDate());
         }
+        model.addAttribute("nameSortingParam", taskService.getNameSortingParam());
+        model.addAttribute("dateSortingParam", taskService.getDateSortingParam());
         return "tasks/getAll";
     }
 

@@ -22,7 +22,8 @@ import java.util.List;
 public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
-    private static boolean SORTED = true;
+    private static boolean NAME_SORTING_ASC = true;
+    private static boolean DATE_SORTING_ASC = true;
 
     @Autowired
     public TaskServiceImpl(TaskRepository taskRepository) {
@@ -40,12 +41,21 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<Task> getAll(String sortParameter) {
-        SORTED = !SORTED;
-        if (SORTED) {
-            return taskRepository.findAll(Sort.by(Sort.Direction.DESC, sortParameter));
+    public List<Task> getAllSortedByName() {
+        NAME_SORTING_ASC = !NAME_SORTING_ASC;
+        if (NAME_SORTING_ASC) {
+            return taskRepository.findAll(Sort.by(Sort.Direction.DESC, "name"));
         }
-        return taskRepository.findAll(Sort.by(Sort.Direction.ASC, sortParameter));
+        return taskRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
+    }
+
+    @Override
+    public List<Task> getAllSortedByDate() {
+        DATE_SORTING_ASC = !DATE_SORTING_ASC;
+        if (DATE_SORTING_ASC) {
+            return taskRepository.findAll(Sort.by(Sort.Direction.DESC, "date"));
+        }
+        return taskRepository.findAll(Sort.by(Sort.Direction.ASC, "date"));
     }
 
     @Override
@@ -85,12 +95,12 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<Task> getActive() {
-        return null;
+    public boolean getNameSortingParam() {
+        return NAME_SORTING_ASC;
     }
 
     @Override
-    public List<Task> getFinished() {
-        return null;
+    public boolean getDateSortingParam() {
+        return DATE_SORTING_ASC;
     }
 }
