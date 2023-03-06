@@ -8,24 +8,22 @@ package com.bereznev.webapp.service;
  */
 
 import com.bereznev.webapp.exception.ResourceNotFoundException;
-import com.bereznev.webapp.exception.TooBigArgumentException;
-import com.bereznev.webapp.model.FlashCard;
 import com.bereznev.webapp.model.Task;
-import com.bereznev.webapp.repository.FlashCardRepository;
 import com.bereznev.webapp.repository.TaskRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 @Service
 @Transactional
 public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
+    private static boolean NAME_SORTING_ASC = true;
+    private static boolean DATE_SORTING_ASC = true;
 
     @Autowired
     public TaskServiceImpl(TaskRepository taskRepository) {
@@ -40,6 +38,24 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<Task> getAll() {
         return taskRepository.findAll();
+    }
+
+    @Override
+    public List<Task> getAllSortedByName() {
+        NAME_SORTING_ASC = !NAME_SORTING_ASC;
+        if (NAME_SORTING_ASC) {
+            return taskRepository.findAll(Sort.by(Sort.Direction.DESC, "name"));
+        }
+        return taskRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
+    }
+
+    @Override
+    public List<Task> getAllSortedByDate() {
+        DATE_SORTING_ASC = !DATE_SORTING_ASC;
+        if (DATE_SORTING_ASC) {
+            return taskRepository.findAll(Sort.by(Sort.Direction.DESC, "date"));
+        }
+        return taskRepository.findAll(Sort.by(Sort.Direction.ASC, "date"));
     }
 
     @Override
@@ -76,5 +92,15 @@ public class TaskServiceImpl implements TaskService {
             case ("FINISHED") -> task.setStatus("ACTIVE");
         }
         taskRepository.save(task);
+    }
+
+    @Override
+    public boolean getNameSortingParam() {
+        return NAME_SORTING_ASC;
+    }
+
+    @Override
+    public boolean getDateSortingParam() {
+        return DATE_SORTING_ASC;
     }
 }

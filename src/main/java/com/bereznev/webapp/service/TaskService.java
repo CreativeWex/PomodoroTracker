@@ -15,10 +15,14 @@ public interface TaskService {
     // CRUD
     Task save(Task task);
     List<Task> getAll();
+    List<Task> getAllSortedByName();
+    List<Task> getAllSortedByDate();
     Task getById(Long id);
     Task update(Long id, Task updatedTask);
     void delete(Long id);
 
     // Business-logic
     public void changeStatus(Long id);
+    boolean getNameSortingParam();
+    boolean getDateSortingParam();
 }

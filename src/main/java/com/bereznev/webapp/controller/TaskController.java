@@ -16,6 +16,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @Controller
 @RequestMapping("/api/tasks")
 public class TaskController {
@@ -29,7 +31,6 @@ public class TaskController {
 
     @PostMapping()
     public String save(@ModelAttribute("task") @Valid Task task, BindingResult bindingResult) {
-        System.out.println(task);
         if (!bindingResult.hasErrors()) {
             taskService.save(task);
         }
@@ -38,8 +39,17 @@ public class TaskController {
 
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
-    public String getAll(@ModelAttribute("task") Task task, Model model) {
-        model.addAttribute("tasksList", taskService.getAll());
+    public String getAll(@RequestParam(name = "sort", required = false) Optional<String> sortParameter,
+                         @ModelAttribute("task") Task task, Model model) {
+        if (sortParameter.isEmpty()) {
+            model.addAttribute("tasksList", taskService.getAll());
+        } else if (sortParameter.get().equals("name")) {
+            model.addAttribute("tasksList", taskService.getAllSortedByName());
+        } else {
+            model.addAttribute("tasksList", taskService.getAllSortedByDate());
+        }
+        model.addAttribute("nameSortingParam", taskService.getNameSortingParam());
+        model.addAttribute("dateSortingParam", taskService.getDateSortingParam());
         return "tasks/getAll";
     }
 
