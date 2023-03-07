@@ -15,14 +15,6 @@ create table tasks
     name text not null unique,
     date date,
     description text,
-    is_active boolean default true not null
-);
-
-drop table if exists sub_tasks cascade;
-create table sub_tasks
-(
-    id bigint primary key generated always as identity,
-    name text not null unique,
-    date date,
-    description text
+    is_active boolean default true not null,
+    is_important boolean default false not null
 );

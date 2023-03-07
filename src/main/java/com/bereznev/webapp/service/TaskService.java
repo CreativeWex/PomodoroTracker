@@ -8,20 +8,18 @@ package com.bereznev.webapp.service;
  */
 
 import com.bereznev.webapp.model.Task;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
 public interface TaskService {
     // CRUD
+    List<Task> findActiveTasks();
+    List<Task> findFinishedTasks();
     Task save(Task task);
-    List<Task> getAll();
-    Task getById(Long id);
     Task update(Long id, Task updatedTask);
     void delete(Long id);
 
     // Business-logic
-    List<Task> findFinishedTasks();
-    List<Task> findActiveTasks();
-    public void changeStatus(Long id);
+    public void switchActiveStatus(Long id);
+    public void switchImportantStatus(Long id);
 }

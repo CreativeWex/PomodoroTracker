@@ -39,16 +39,6 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<Task> getAll() {
-        return taskRepository.findAll();
-    }
-
-    @Override
-    public Task getById(Long id) {
-        return taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Task", "Id", id));
-    }
-
-    @Override
     public Task update(Long id, Task updatedTask) {
         Task existedTask = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Task", "Id", id));
 
@@ -81,14 +71,20 @@ public class TaskServiceImpl implements TaskService {
         if (entityManager == null || entityManager.unwrap(Session.class) == null) {
             throw new NullPointerException();
         }
-        return entityManager.createQuery("select task from Task task where task.isActive = true").getResultList();
+        return entityManager.createQuery("select task from Task task where task.isActive = true order by task.isImportant desc").getResultList();
     }
 
     @Override
-    public void changeStatus(Long id) {
+    public void switchActiveStatus(Long id) {
         Task task = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Task", "Id", id));
         task.setActive(!task.isActive());
         taskRepository.save(task);
     }
 
+    @Override
+    public void switchImportantStatus(Long id) {
+        Task task = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Task", "Id", id));
+        task.setImportant(!task.isImportant());
+        taskRepository.save(task);
+    }
 }

@@ -37,6 +37,9 @@ public class Task {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "is_active", nullable = false, insertable = false, columnDefinition = "ACTIVE")
-    private boolean isActive;
+    @Column(name = "is_active", nullable = false, insertable = false)
+    private boolean isActive = true;
+
+    @Column(name = "is_important", nullable = false, insertable = false)
+    private boolean isImportant = false;
 }

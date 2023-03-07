@@ -58,9 +58,15 @@ public class TaskController {
         return "tasks/getAll";
     }
 
-    @PatchMapping("{id}/change_status")
+    @PatchMapping("/{id}/switch_active_status")
     public String changeStatus(@PathVariable("id") Long id) {
-        taskService.changeStatus(id);
+        taskService.switchActiveStatus(id);
+        return "redirect:/api/tasks";
+    }
+
+    @PatchMapping("/{id}/switch_important_status")
+    public String makeImportant(@PathVariable("id") Long id) {
+        taskService.switchImportantStatus(id);
         return "redirect:/api/tasks";
     }
 
@@ -72,12 +78,13 @@ public class TaskController {
 //        return "flashCards/getById";
 //    }
 //
-//    @PutMapping("{id}/update")
-//    @ResponseStatus(HttpStatus.OK)
-//    public ResponseEntity<FlashCard> update(@PathVariable("id") Long id, @RequestBody FlashCard flashCard) {
-//        return new ResponseEntity<FlashCard>(flashCardService.update(id, flashCard), HttpStatus.OK);
-//    }
-//
+    @PutMapping("{id}/update")
+    @ResponseStatus(HttpStatus.OK)
+    public String update(@PathVariable("id") Long id, @RequestBody Task task) {
+        taskService.update(id, task);
+        return new ResponseEntity<FlashCard>(flashCardService.update(id, flashCard), HttpStatus.OK);
+    }
+
     @DeleteMapping("{id}/delete")
     public String delete(@PathVariable("id") Long id) {
         taskService.delete(id);
