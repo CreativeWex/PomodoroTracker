@@ -8,7 +8,6 @@ package com.bereznev.webapp.model;
  */
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -38,7 +37,6 @@ public class Task {
     @Column(name = "description")
     private String description;
 
-    @Pattern(regexp = "(FINISHED)|(ACTIVE)")
-    @Column(name = "status", nullable = false, insertable = false, columnDefinition = "ACTIVE")
-    private String status;
+    @Column(name = "is_active", nullable = false, insertable = false, columnDefinition = "ACTIVE")
+    private boolean isActive;
 }

@@ -48,8 +48,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="task : ${activeTasks}" th:class="${task.getStatus().matches('ACTIVE') ? 'table-default' : 'table-secondary'}"
-                th:style="${task.getStatus().matches('ACTIVE') ? '' : 'text-decoration:line-through'}">
+            <tr th:each="task : ${activeTasks}" class="table-default">
                 <td>
                     <div class="btn-group" role="group" aria-label="Basic outlined example">
                         <form th:method="PATCH" th:action="@{/api/tasks/{id}/change_status(id=${task.getId()})}" th:object="${task}">
@@ -91,8 +90,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="task : ${finishedTasks}" th:class="${task.getStatus().matches('ACTIVE') ? 'table-default' : 'table-secondary'}"
-                    th:style="${task.getStatus().matches('ACTIVE') ? '' : 'text-decoration:line-through'}">
+                <tr th:each="task : ${finishedTasks}" class="table-secondary" style="text-decoration:line-through">
                     <td>
                         <div class="btn-group" role="group" aria-label="Basic outlined example">
                             <form th:method="PATCH" th:action="@{/api/tasks/{id}/change_status(id=${task.getId()})}" th:object="${task}">

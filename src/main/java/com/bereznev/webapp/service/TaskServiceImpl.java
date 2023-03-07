@@ -50,8 +50,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task update(Long id, Task updatedTask) {
-        Task existedTask = taskRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Task", "Id", id));
+        Task existedTask = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Task", "Id", id));
 
         existedTask.setName(updatedTask.getName());
         existedTask.setDate(updatedTask.getDate());
@@ -73,7 +72,7 @@ public class TaskServiceImpl implements TaskService {
         if (entityManager == null || entityManager.unwrap(Session.class) == null) {
             throw new NullPointerException();
         }
-        return entityManager.createQuery("select task from Task task where task.status = ?1").setParameter(1, "FINISHED").getResultList();
+        return entityManager.createQuery("select task from Task task where task.isActive = false").getResultList();
     }
 
     @Override
@@ -82,18 +81,13 @@ public class TaskServiceImpl implements TaskService {
         if (entityManager == null || entityManager.unwrap(Session.class) == null) {
             throw new NullPointerException();
         }
-        return entityManager.createQuery("select task from Task task where task.status = ?1").setParameter(1, "ACTIVE").getResultList();
+        return entityManager.createQuery("select task from Task task where task.isActive = true").getResultList();
     }
 
     @Override
     public void changeStatus(Long id) {
-        Task task = taskRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Task", "Id", id));
-
-        switch (task.getStatus()) {
-            case ("ACTIVE") -> task.setStatus("FINISHED");
-            case ("FINISHED") -> task.setStatus("ACTIVE");
-        }
+        Task task = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Task", "Id", id));
+        task.setActive(!task.isActive());
         taskRepository.save(task);
     }
 

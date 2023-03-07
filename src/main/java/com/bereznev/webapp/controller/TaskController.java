@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -41,9 +42,19 @@ public class TaskController {
     @ResponseStatus(HttpStatus.OK)
     public String getAll(@RequestParam(name = "sort", required = false) Optional<String> sortParameter, @ModelAttribute("task") Task task, Model model) {
         if (sortParameter.isEmpty()) {
+            System.out.println("Active tasks");
+            List<Task> activeTasks = taskService.findActiveTasks();
+            for (Task task1 : activeTasks) {
+                System.out.println(task1);
+            }
             model.addAttribute("activeTasks", taskService.findActiveTasks());
         }
         model.addAttribute("finishedTasks", taskService.findFinishedTasks());
+        System.out.println("Finished tasks");
+        List<Task> activeTasks = taskService.findFinishedTasks();
+        for (Task task1 : activeTasks) {
+            System.out.println(task1);
+        }
         return "tasks/getAll";
     }
 
