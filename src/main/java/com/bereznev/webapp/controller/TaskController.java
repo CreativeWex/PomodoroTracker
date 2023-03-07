@@ -79,10 +79,15 @@ public class TaskController {
 //    }
 //
     @PutMapping("{id}/update")
-    @ResponseStatus(HttpStatus.OK)
     public String update(@PathVariable("id") Long id, @RequestBody Task task) {
         taskService.update(id, task);
-        return new ResponseEntity<FlashCard>(flashCardService.update(id, flashCard), HttpStatus.OK);
+        return "redirect:/api/tasks";
+    }
+
+    @GetMapping("{id}/update")
+    public String update(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("task", taskService.findById(id));
+        return "redirect:/api/tasks";
     }
 
     @DeleteMapping("{id}/delete")

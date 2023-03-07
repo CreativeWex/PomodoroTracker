@@ -27,7 +27,7 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Size(min = 2, max = 100, message = "Имя должно быть не меньше 2 и не больше 100 символов!")
+    @Size(min = 2, max = 100, message = "Название должно быть не меньше 2 и не больше 100 символов!")
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
@@ -35,6 +35,7 @@ public class Task {
     private Date date;
 
     @Column(name = "description")
+    @Size(min = 2, max = 250, message = "Имя должно быть не меньше 2 и не больше 100 символов!")
     private String description;
 
     @Column(name = "is_active", nullable = false, insertable = false)

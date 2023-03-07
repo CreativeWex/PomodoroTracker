@@ -66,6 +66,11 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public Task findById(Long id) {
+        return taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Task", "Id", id));
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public List<Task> findActiveTasks() {
         if (entityManager == null || entityManager.unwrap(Session.class) == null) {

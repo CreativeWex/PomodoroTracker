@@ -15,6 +15,8 @@ public interface TaskService {
     // CRUD
     List<Task> findActiveTasks();
     List<Task> findFinishedTasks();
+
+    Task findById(Long id);
     Task save(Task task);
     Task update(Long id, Task updatedTask);
     void delete(Long id);
