@@ -10,9 +10,11 @@ package com.bereznev.webapp.service;
 import com.bereznev.webapp.exception.ResourceNotFoundException;
 import com.bereznev.webapp.model.Task;
 import com.bereznev.webapp.repository.TaskRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,9 +23,10 @@ import java.util.List;
 @Transactional
 public class TaskServiceImpl implements TaskService {
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     private final TaskRepository taskRepository;
-    private static boolean NAME_SORTING_ASC = true;
-    private static boolean DATE_SORTING_ASC = true;
 
     @Autowired
     public TaskServiceImpl(TaskRepository taskRepository) {
@@ -38,24 +41,6 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<Task> getAll() {
         return taskRepository.findAll();
-    }
-
-    @Override
-    public List<Task> getAllSortedByName() {
-        NAME_SORTING_ASC = !NAME_SORTING_ASC;
-        if (NAME_SORTING_ASC) {
-            return taskRepository.findAll(Sort.by(Sort.Direction.DESC, "name"));
-        }
-        return taskRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
-    }
-
-    @Override
-    public List<Task> getAllSortedByDate() {
-        DATE_SORTING_ASC = !DATE_SORTING_ASC;
-        if (DATE_SORTING_ASC) {
-            return taskRepository.findAll(Sort.by(Sort.Direction.DESC, "date"));
-        }
-        return taskRepository.findAll(Sort.by(Sort.Direction.ASC, "date"));
     }
 
     @Override
@@ -83,6 +68,24 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    public List<Task> findFinishedTasks() {
+        if (entityManager == null || entityManager.unwrap(Session.class) == null) {
+            throw new NullPointerException();
+        }
+        return entityManager.createQuery("select task from Task task where task.status = ?1").setParameter(1, "FINISHED").getResultList();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Task> findActiveTasks() {
+        if (entityManager == null || entityManager.unwrap(Session.class) == null) {
+            throw new NullPointerException();
+        }
+        return entityManager.createQuery("select task from Task task where task.status = ?1").setParameter(1, "ACTIVE").getResultList();
+    }
+
+    @Override
     public void changeStatus(Long id) {
         Task task = taskRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Task", "Id", id));
@@ -94,13 +97,4 @@ public class TaskServiceImpl implements TaskService {
         taskRepository.save(task);
     }
 
-    @Override
-    public boolean getNameSortingParam() {
-        return NAME_SORTING_ASC;
-    }
-
-    @Override
-    public boolean getDateSortingParam() {
-        return DATE_SORTING_ASC;
-    }
 }

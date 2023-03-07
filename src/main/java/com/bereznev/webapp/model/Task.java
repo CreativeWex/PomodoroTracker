@@ -16,8 +16,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -43,17 +41,4 @@ public class Task {
     @Pattern(regexp = "(FINISHED)|(ACTIVE)")
     @Column(name = "status", nullable = false, insertable = false, columnDefinition = "ACTIVE")
     private String status;
-
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SubTask> subTasks = new ArrayList<>();
-
-    public void addSubtask(SubTask subTask) {
-        subTasks.add(subTask);
-        subTask.setTask(this);
-    }
-
-    public void removeSubTask(SubTask subTask) {
-        subTasks.remove(subTask);
-        subTask.setTask(null);
-    }
 }

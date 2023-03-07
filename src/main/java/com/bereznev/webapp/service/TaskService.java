@@ -8,6 +8,7 @@ package com.bereznev.webapp.service;
  */
 
 import com.bereznev.webapp.model.Task;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -15,14 +16,12 @@ public interface TaskService {
     // CRUD
     Task save(Task task);
     List<Task> getAll();
-    List<Task> getAllSortedByName();
-    List<Task> getAllSortedByDate();
     Task getById(Long id);
     Task update(Long id, Task updatedTask);
     void delete(Long id);
 
     // Business-logic
+    List<Task> findFinishedTasks();
+    List<Task> findActiveTasks();
     public void changeStatus(Long id);
-    boolean getNameSortingParam();
-    boolean getDateSortingParam();
 }
