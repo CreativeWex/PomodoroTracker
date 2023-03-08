@@ -9,11 +9,9 @@
 <body>
 
 <div class="container-sm">
-    <h5 class="display-5" align="center">Список дел</h5>
-    <figure class="text-center">
-        <p></p>
-    </figure>
+    <h5 class="display-5" align="center">Список дел</h5><figure class="text-center"><p>Активные и завершенные задачи</p></figure>
 
+    <!--    Форма ввода новой задачи-->
     <form th:method="POST" th:action="@{/api/tasks}" th:object="${task}">
         <div class="mb-3">
             <label for="name">Название</label>
@@ -32,10 +30,22 @@
             <div style="color:red" th:if="${#fields.hasErrors('date')}" th:errors="*{date}">date Error</div>
         </div>
         <input type="submit" class="btn btn-primary" value="Добавить"/>
-    </form>
+    </form><br><br>
 
-    <br><br>
+    <!--    Задачи отсутствуют-->
+    <div th:if="${activeTasks.size() == 0 && finishedTasks.size() == 0}">
+        <figure class="text-center"><h6 class="display-6">Задачи отсутствуют</h6></figure>
+        <div align="center" style="opacity: 0.5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-clipboard2-x" viewBox="0 0 16 16">
+                <path d="M9.5 0a.5.5 0 0 1 .5.5.5.5 0 0 0 .5.5.5.5 0 0 1 .5.5V2a.5.5 0 0 1-.5.5h-5A.5.5 0 0 1 5 2v-.5a.5.5 0 0 1 .5-.5.5.5 0 0 0 .5-.5.5.5 0 0 1 .5-.5h3Z"/>
+                <path d="M3 2.5a.5.5 0 0 1 .5-.5H4a.5.5 0 0 0 0-1h-.5A1.5 1.5 0 0 0 2 2.5v12A1.5 1.5 0 0 0 3.5 16h9a1.5 1.5 0 0 0 1.5-1.5v-12A1.5 1.5 0 0 0 12.5 1H12a.5.5 0 0 0 0 1h.5a.5.5 0 0 1 .5.5v12a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5v-12Z"/>
+                <path d="M8 8.293 6.854 7.146a.5.5 0 1 0-.708.708L7.293 9l-1.147 1.146a.5.5 0 0 0 .708.708L8 9.707l1.146 1.147a.5.5 0 0 0 .708-.708L8.707 9l1.147-1.146a.5.5 0 0 0-.708-.708L8 8.293Z"/>
+            </svg>
+        </div>
 
+    </div>
+
+    <!--    Активные задачи-->
     <div th:if="${activeTasks.size() != 0}">
         <p class="fs-5" th:text="'Незавершенные (' + ${activeTasks.size()} + ')'">Незавершенные</p>
         <table class="table table-hover">
@@ -83,10 +93,9 @@
             </tr>
             </tbody>
         </table>
-    </div>
+    </div><br>
 
-    <br>
-
+    <!--    Завершенные задачи-->
     <div th:if="${finishedTasks.size() != 0}">
         <p><button th:text="'Завершенные (' + ${finishedTasks.size()} + ')'" class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Завершенные</button></p>
         <div class="collapse" id="collapseExample">
@@ -103,6 +112,7 @@
                 <tr th:each="task : ${finishedTasks}" class="table-secondary" style="text-decoration:line-through">
                     <td>
                         <div class="btn-group" role="group" aria-label="Basic outlined example">
+                            <!-- Отметить невыполненным -->
                             <form th:method="PATCH" th:action="@{/api/tasks/{id}/switch_active_status(id=${task.getId()})}" th:object="${task}">
                                 <button type="submit" class="btn btn-outline-success">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2" viewBox="0 0 16 16">
