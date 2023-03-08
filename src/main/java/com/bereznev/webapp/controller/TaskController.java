@@ -40,21 +40,9 @@ public class TaskController {
 
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
-    public String getAll(@RequestParam(name = "sort", required = false) Optional<String> sortParameter, @ModelAttribute("task") Task task, Model model) {
-        if (sortParameter.isEmpty()) {
-            System.out.println("Active tasks");
-            List<Task> activeTasks = taskService.findActiveTasks();
-            for (Task task1 : activeTasks) {
-                System.out.println(task1);
-            }
-            model.addAttribute("activeTasks", taskService.findActiveTasks());
-        }
+    public String getAll(@ModelAttribute("task") Task task, Model model) {
+        model.addAttribute("activeTasks", taskService.findActiveTasks());
         model.addAttribute("finishedTasks", taskService.findFinishedTasks());
-        System.out.println("Finished tasks");
-        List<Task> activeTasks = taskService.findFinishedTasks();
-        for (Task task1 : activeTasks) {
-            System.out.println(task1);
-        }
         return "tasks/getAll";
     }
 
@@ -70,14 +58,6 @@ public class TaskController {
         return "redirect:/api/tasks";
     }
 
-
-//    @GetMapping("{id}")
-//    @ResponseStatus(HttpStatus.OK)
-//    public String getById(@PathVariable("id") Long id, Model model) {
-//        model.addAttribute("card", flashCardService.getById(id));
-//        return "flashCards/getById";
-//    }
-//
     @PutMapping("{id}/update")
     public String update(@PathVariable("id") Long id, @RequestBody Task task) {
         taskService.update(id, task);
