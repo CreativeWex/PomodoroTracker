@@ -14,7 +14,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -33,7 +33,7 @@ public class Task {
 
     @Column(name = "date", nullable = false)
     @DateTimeFormat(pattern = "dd.MM.yyyy")
-    private LocalDateTime date;
+    private LocalDate date;
 
     @Column(name = "description")
     private String description;

@@ -27,7 +27,7 @@
     </div>
     <div class="mb-3">
       <label for="date">Дата: </label>
-      <input class="form-control" type="date" th:field="*{date}" id="date" pattern="dd.MM.yyyy"/>
+      <input class="form-control" type="date" th:field="*{date}" id="date" pattern="yyyy-MM-dd"/>
       <div style="color:red" th:if="${#fields.hasErrors('date')}" th:errors="*{date}">date Error</div>
     </div>
     <input type="submit" class="btn btn-primary" value="Добавить"/>

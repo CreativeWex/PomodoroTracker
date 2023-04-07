@@ -40,17 +40,6 @@ public class TaskController {
         return "tasks/new";
     }
 
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        binder.registerCustomEditor(LocalDateTime.class, new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) throws IllegalArgumentException {
-                setValue(LocalDateTime.parse(text, formatter));
-            }
-        });
-    }
-
     @PostMapping
     public String addNewTask(@ModelAttribute("task") @Valid Task task, BindingResult bindingResult) {
         taskValidator.validate(task, bindingResult);
@@ -78,7 +67,7 @@ public class TaskController {
     @PatchMapping("/{id}/switch_important_status")
     public String makeImportant(@PathVariable("id") Long id) {
         taskService.switchImportantStatus(id);
-        return "redirect:/api/tasks";
+        return "redirect:/api/v1/tasks";
     }
 
     @PatchMapping("/{id}/update")
@@ -90,12 +79,6 @@ public class TaskController {
         taskService.update(id, task);
         return "redirect:/api/v1/tasks";
     }
-
-//    @GetMapping("{id}/update")
-//    public String update(@PathVariable("id") Long id, Model model) {
-//        model.addAttribute("task", taskService.findById(id));
-//        return "redirect:/api/tasks";
-//    }
 
     @DeleteMapping("{id}/delete")
     public String delete(@PathVariable("id") Long id) {
