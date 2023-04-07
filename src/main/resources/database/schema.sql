@@ -12,17 +12,9 @@ drop table if exists tasks cascade;
 create table tasks
 (
     id bigint primary key generated always as identity,
-    name text not null unique,
+    name text not null,
     date date,
     description text,
-    status varchar(10) default 'ACTIVE' not null
-);
-
-drop table if exists sub_tasks cascade;
-create table sub_tasks
-(
-    id bigint primary key generated always as identity,
-    name text not null unique,
-    date date,
-    description text
+    is_active boolean default true not null,
+    is_important boolean default false not null
 );

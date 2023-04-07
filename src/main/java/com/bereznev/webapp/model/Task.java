@@ -8,16 +8,13 @@ package com.bereznev.webapp.model;
  */
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -30,30 +27,20 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Size(min = 2, max = 100, message = "Имя должно быть не меньше 2 и не больше 100 символов!")
+    @Size(min = 2, max = 100, message = "Название должно быть не меньше 2 и не больше 100 символов!")
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     @Column(name = "date", nullable = false)
-    private Date date;
+    @DateTimeFormat(pattern = "dd.MM.yyyy")
+    private LocalDateTime date;
 
     @Column(name = "description")
     private String description;
 
-    @Pattern(regexp = "(FINISHED)|(ACTIVE)")
-    @Column(name = "status", nullable = false, insertable = false, columnDefinition = "ACTIVE")
-    private String status;
+    @Column(name = "is_active", nullable = false, insertable = false)
+    private boolean isActive = true;
 
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SubTask> subTasks = new ArrayList<>();
-
-    public void addSubtask(SubTask subTask) {
-        subTasks.add(subTask);
-        subTask.setTask(this);
-    }
-
-    public void removeSubTask(SubTask subTask) {
-        subTasks.remove(subTask);
-        subTask.setTask(null);
-    }
+    @Column(name = "is_important", nullable = false, insertable = false)
+    private boolean isImportant = false;
 }

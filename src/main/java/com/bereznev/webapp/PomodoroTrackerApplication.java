@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 
 @SpringBootApplication
-public class FlashCardsApplication {
+public class PomodoroTrackerApplication {
 
     @Bean
     HiddenHttpMethodFilter hiddenHttpMethodFilter() {
@@ -14,7 +14,7 @@ public class FlashCardsApplication {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(FlashCardsApplication.class, args);
+        SpringApplication.run(PomodoroTrackerApplication.class, args);
     }
 
 }

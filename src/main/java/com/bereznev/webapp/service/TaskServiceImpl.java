@@ -5,14 +5,17 @@ package com.bereznev.webapp.service;
     @created 06/02/2023    
     @author Bereznev Nikita @CreativeWex
     =====================================
- */
+*/
 
 import com.bereznev.webapp.exception.ResourceNotFoundException;
+import com.bereznev.webapp.exception.SessionOpeningException;
 import com.bereznev.webapp.model.Task;
 import com.bereznev.webapp.repository.TaskRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,9 +24,10 @@ import java.util.List;
 @Transactional
 public class TaskServiceImpl implements TaskService {
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     private final TaskRepository taskRepository;
-    private static boolean NAME_SORTING_ASC = true;
-    private static boolean DATE_SORTING_ASC = true;
 
     @Autowired
     public TaskServiceImpl(TaskRepository taskRepository) {
@@ -36,37 +40,8 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<Task> getAll() {
-        return taskRepository.findAll();
-    }
-
-    @Override
-    public List<Task> getAllSortedByName() {
-        NAME_SORTING_ASC = !NAME_SORTING_ASC;
-        if (NAME_SORTING_ASC) {
-            return taskRepository.findAll(Sort.by(Sort.Direction.DESC, "name"));
-        }
-        return taskRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
-    }
-
-    @Override
-    public List<Task> getAllSortedByDate() {
-        DATE_SORTING_ASC = !DATE_SORTING_ASC;
-        if (DATE_SORTING_ASC) {
-            return taskRepository.findAll(Sort.by(Sort.Direction.DESC, "date"));
-        }
-        return taskRepository.findAll(Sort.by(Sort.Direction.ASC, "date"));
-    }
-
-    @Override
-    public Task getById(Long id) {
-        return taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Task", "Id", id));
-    }
-
-    @Override
     public Task update(Long id, Task updatedTask) {
-        Task existedTask = taskRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Task", "Id", id));
+        Task existedTask = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Task", "Id", id));
 
         existedTask.setName(updatedTask.getName());
         existedTask.setDate(updatedTask.getDate());
@@ -83,24 +58,51 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void changeStatus(Long id) {
-        Task task = taskRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Task", "Id", id));
-
-        switch (task.getStatus()) {
-            case ("ACTIVE") -> task.setStatus("FINISHED");
-            case ("FINISHED") -> task.setStatus("ACTIVE");
+    @SuppressWarnings("unchecked")
+    public List<Task> findFinishedTasks() {
+        if (entityManager == null || entityManager.unwrap(Session.class) == null) {
+            throw new SessionOpeningException("findFinishedTasks()");
         }
+        return entityManager.createQuery("select task from Task task where task.isActive = false").getResultList();
+    }
+
+    @Override
+    public Task findById(Long id) {
+        return taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Task", "Id", id));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Task> findActiveTasks() {
+        if (entityManager == null || entityManager.unwrap(Session.class) == null) {
+            throw new SessionOpeningException("findActiveTasks()");
+        }
+        return entityManager.createQuery("select task from Task task where task.isActive = true order by task.isImportant desc").getResultList();
+    }
+
+    @Override
+    public void switchActiveStatus(Long id) {
+        Task task = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Task", "Id", id));
+        task.setActive(!task.isActive());
         taskRepository.save(task);
     }
 
     @Override
-    public boolean getNameSortingParam() {
-        return NAME_SORTING_ASC;
+    public void switchImportantStatus(Long id) {
+        Task task = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Task", "Id", id));
+        task.setImportant(!task.isImportant());
+        taskRepository.save(task);
     }
 
     @Override
-    public boolean getDateSortingParam() {
-        return DATE_SORTING_ASC;
+    public boolean isAlreadyPresent(Long id, String name) {
+        if (entityManager == null || entityManager.unwrap(Session.class) == null) {
+            throw new SessionOpeningException("isAlreadyPresent(Long id, String name)");
+        }
+        return entityManager.createQuery("select task from Task task where task.name = ?1 and task.isActive = true")
+                .setParameter(1, name)
+                .getResultStream()
+                .findFirst()
+                .isPresent();
     }
 }
