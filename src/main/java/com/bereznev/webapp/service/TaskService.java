@@ -10,6 +10,7 @@ package com.bereznev.webapp.service;
 import com.bereznev.webapp.model.Task;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TaskService {
     // CRUD
@@ -24,4 +25,7 @@ public interface TaskService {
     // Business-logic
     public void switchActiveStatus(Long id);
     public void switchImportantStatus(Long id);
+
+    // Validation
+   public boolean isAlreadyPresent(Long id, String name);
 }

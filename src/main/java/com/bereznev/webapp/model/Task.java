@@ -8,13 +8,13 @@ package com.bereznev.webapp.model;
  */
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -32,10 +32,10 @@ public class Task {
     private String name;
 
     @Column(name = "date", nullable = false)
-    private Date date;
+    @DateTimeFormat(pattern = "dd.MM.yyyy")
+    private LocalDateTime date;
 
     @Column(name = "description")
-    @Size(min = 2, max = 250, message = "Имя должно быть не меньше 2 и не больше 100 символов!")
     private String description;
 
     @Column(name = "is_active", nullable = false, insertable = false)

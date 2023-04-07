@@ -4,33 +4,22 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Задачи</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="timer.js"></script>
 </head>
 <body>
 
+<br><br>
 <div class="container-sm">
+
+
+    <!--    СПИСОК ДЕЛ-->
     <h5 class="display-5" align="center">Список дел</h5><figure class="text-center"><p>Активные и завершенные задачи</p></figure>
 
-    <!--    Форма ввода новой задачи-->
-    <form th:method="POST" th:action="@{/api/tasks}" th:object="${task}">
-        <div class="mb-3">
-            <label for="name">Название</label>
-            <input class="form-control" type="text" th:field="*{name}" id="name"/>
-            <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</div>
-            <div class="form-text">*обязательное поле</div>
-        </div>
-        <div class="mb-3">
-            <label for="description">Описание: </label>
-            <input class="form-control" type="text" th:field="*{description}" id="description"/>
-            <div style="color:red" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">description Error</div>
-        </div>
-        <div class="mb-3">
-            <label for="date">Дата: </label>
-            <input class="form-control" type="date" th:field="*{date}" id="date"/>
-            <div style="color:red" th:if="${#fields.hasErrors('date')}" th:errors="*{date}">date Error</div>
-        </div>
-        <input type="submit" class="btn btn-primary" value="Добавить"/>
-    </form><br><br>
+    <div class="d-grid gap-2">
+        <a th:href="@{/api/v1/tasks/new}"><button class="btn btn-primary" type="button">Новая задача</button></a>
+    </div>
 
     <!--    Задачи отсутствуют-->
     <div th:if="${activeTasks.size() == 0 && finishedTasks.size() == 0}">
@@ -61,14 +50,17 @@
             <tr th:each="task : ${activeTasks}" th:class="${task.isImportant() ? 'table-warning' : 'table-default'}">
                 <td>
                     <div class="btn-group" role="group" aria-label="Basic outlined example">
-                        <form th:method="PATCH" th:action="@{/api/tasks/{id}/switch_active_status(id=${task.getId()})}" th:object="${task}">
+                        <!-- Отметить выполненным-->
+                        <form th:method="PATCH" th:action="@{/api/v1/tasks/{id}/switch_active_status(id=${task.getId()})}" th:object="${task}">
                             <button type="submit" class="btn btn-outline-success">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2" viewBox="0 0 16 16">
                                     <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
                                 </svg>
                             </button>
                         </form>
-                        <form th:method="PATCH" th:action="@{/api/tasks/{id}/switch_important_status(id=${task.getId()})}" th:object="${task}">
+
+                        <!-- Отметить важным -->
+                        <form th:method="PATCH" th:action="@{/api/v1/tasks/{id}/switch_important_status(id=${task.getId()})}" th:object="${task}">
                             <button type="submit" class="btn btn-outline-warning">
                                 <svg th:if="${task.isImportant() == false}" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star" viewBox="0 0 16 16">
                                     <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/>
@@ -78,18 +70,11 @@
                                 </svg>
                             </button>
                         </form>
-                        <a th:href="@{/api/tasks/{id}/update(id=${task.getId()})}">
-                            <button type="submit" class="btn btn-outline-primary">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
-                                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
-                                </svg>
-                            </button>
-                        </a>
                     </div>
                 </td>
                 <th th:text="${task.getName()}">Name</th>
                 <td th:text="${task.getDescription()}">getDescription</td>
-                <td th:text="${task.getDate()}">getDate</td>
+                <td th:text="${#temporals.format(task.getDate(), 'dd.MM.yyyy')}">date</td>
             </tr>
             </tbody>
         </table>
@@ -113,32 +98,34 @@
                     <td>
                         <div class="btn-group" role="group" aria-label="Basic outlined example">
                             <!-- Отметить невыполненным -->
-                            <form th:method="PATCH" th:action="@{/api/tasks/{id}/switch_active_status(id=${task.getId()})}" th:object="${task}">
+                            <form th:method="PATCH" th:action="@{/api/v1/tasks/{id}/switch_active_status(id=${task.getId()})}" th:object="${task}">
                                 <button type="submit" class="btn btn-outline-success">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2" viewBox="0 0 16 16">
                                         <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
                                     </svg>
                                 </button>
                             </form>
+
+                            <!-- Удалить -->
                             <!-- Кнопка-триггер модального окна -->
-                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#staticBackdropDelete">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                                     <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
                                     <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
                                 </svg>
                             </button>
                             <!-- Модальное окно -->
-                            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal fade" id="staticBackdropDelete" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropDeleteLabel" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="staticBackdropLabel">Удалить задачу</h5>
+                                            <h5 class="modal-title" id="staticBackdropDeleteLabel">Удалить задачу</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                                         </div>
                                         <div class="modal-body">Это действие не может быть отменено</div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                                            <form th:method="DELETE" th:action="@{/api/tasks/{id}/delete(id=${task.getId()})}" th:object="${task}">
+                                            <form th:method="DELETE" th:action="@{/api/v1/tasks/{id}/delete(id=${task.getId()})}" th:object="${task}">
                                                 <button type="submit" class="btn btn-danger">Удалить</button>
                                             </form>
                                         </div>
@@ -149,7 +136,7 @@
                     </td>
                     <th th:text="${task.getName()}">Name</th>
                     <td th:text="${task.getDescription()}">getDescription</td>
-                    <td th:text="${task.getDate()}">getDate</td>
+                    <td th:text="${#temporals.format(task.getDate(), 'dd/MM/yyyy')}"></td>
                 </tr>
                 </tbody>
             </table>
@@ -158,3 +145,30 @@
 </div>
 </body>
 </html>
+
+
+<script>
+    var countdownTimer;
+    var startingMinutes = 25;
+    var time = startingMinutes * 60;
+
+    function startTimer() {
+        countdownTimer = setInterval(function() {
+            var minutes = Math.floor(time / 60);
+            var seconds = time % 60;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+            document.getElementById("timer").innerHTML = `${minutes}:${seconds}`;
+            time--;
+            if (time < 0) {
+                clearInterval(countdownTimer);
+                document.getElementById("timer").innerHTML = "Время вышло";
+            }
+        }, 1000);
+    }
+
+    function stopTimer() {
+        clearInterval(countdownTimer);
+        document.getElementById("timer").innerHTML = `${startingMinutes}:00`;
+        time = startingMinutes * 60;
+    }
+</script>

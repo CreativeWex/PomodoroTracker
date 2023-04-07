@@ -9,33 +9,56 @@ package com.bereznev.webapp.controller;
 
 import com.bereznev.webapp.model.Task;
 import com.bereznev.webapp.service.TaskService;
+import com.bereznev.webapp.util.TaskValidator;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
+import java.beans.PropertyEditorSupport;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Controller
-@RequestMapping("/api/tasks")
+@RequestMapping("/api/v1/tasks")
 public class TaskController {
 
     private final TaskService taskService;
+    private final TaskValidator taskValidator;
 
-    public TaskController(TaskService taskService) {
+    public TaskController(TaskService taskService, TaskValidator taskValidator) {
         super();
         this.taskService = taskService;
+        this.taskValidator = taskValidator;
     }
 
-    @PostMapping()
-    public String save(@ModelAttribute("task") @Valid Task task, BindingResult bindingResult) {
-        if (!bindingResult.hasErrors()) {
-            taskService.save(task);
+    @GetMapping("/new")
+    public String addNewTask(@ModelAttribute("task") Task task, Model model) {
+        return "tasks/new";
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        binder.registerCustomEditor(LocalDateTime.class, new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) throws IllegalArgumentException {
+                setValue(LocalDateTime.parse(text, formatter));
+            }
+        });
+    }
+
+    @PostMapping
+    public String addNewTask(@ModelAttribute("task") @Valid Task task, BindingResult bindingResult) {
+        taskValidator.validate(task, bindingResult);
+        if (bindingResult.hasErrors()) {
+            return "/tasks/new";
         }
-        return "redirect:/api/tasks";
+        taskService.save(task);
+        return "redirect:/api/v1/tasks";
     }
 
     @GetMapping()
@@ -47,9 +70,9 @@ public class TaskController {
     }
 
     @PatchMapping("/{id}/switch_active_status")
-    public String changeStatus(@PathVariable("id") Long id) {
+    public String switchActiveStatus(@PathVariable("id") Long id) {
         taskService.switchActiveStatus(id);
-        return "redirect:/api/tasks";
+        return "redirect:/api/v1/tasks";
     }
 
     @PatchMapping("/{id}/switch_important_status")
@@ -58,22 +81,26 @@ public class TaskController {
         return "redirect:/api/tasks";
     }
 
-    @PutMapping("{id}/update")
-    public String update(@PathVariable("id") Long id, @RequestBody Task task) {
+    @PatchMapping("/{id}/update")
+    public String update(@PathVariable("id") Long id, @ModelAttribute("updatedTask") @Valid Task task, BindingResult bindingResult, Model model) {
+        taskValidator.validate(task, bindingResult);
+        if (!bindingResult.hasErrors()) {
+            taskService.save(task);
+        }
         taskService.update(id, task);
-        return "redirect:/api/tasks";
+        return "redirect:/api/v1/tasks";
     }
 
-    @GetMapping("{id}/update")
-    public String update(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("task", taskService.findById(id));
-        return "redirect:/api/tasks";
-    }
+//    @GetMapping("{id}/update")
+//    public String update(@PathVariable("id") Long id, Model model) {
+//        model.addAttribute("task", taskService.findById(id));
+//        return "redirect:/api/tasks";
+//    }
 
     @DeleteMapping("{id}/delete")
     public String delete(@PathVariable("id") Long id) {
         taskService.delete(id);
-        return "redirect:/api/tasks";
+        return "redirect:/api/v1/tasks";
     }
 
 }

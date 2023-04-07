@@ -5,9 +5,10 @@ package com.bereznev.webapp.service;
     @created 06/02/2023    
     @author Bereznev Nikita @CreativeWex
     =====================================
- */
+*/
 
 import com.bereznev.webapp.exception.ResourceNotFoundException;
+import com.bereznev.webapp.exception.SessionOpeningException;
 import com.bereznev.webapp.model.Task;
 import com.bereznev.webapp.repository.TaskRepository;
 import jakarta.persistence.EntityManager;
@@ -60,7 +61,7 @@ public class TaskServiceImpl implements TaskService {
     @SuppressWarnings("unchecked")
     public List<Task> findFinishedTasks() {
         if (entityManager == null || entityManager.unwrap(Session.class) == null) {
-            throw new NullPointerException();
+            throw new SessionOpeningException("findFinishedTasks()");
         }
         return entityManager.createQuery("select task from Task task where task.isActive = false").getResultList();
     }
@@ -74,7 +75,7 @@ public class TaskServiceImpl implements TaskService {
     @SuppressWarnings("unchecked")
     public List<Task> findActiveTasks() {
         if (entityManager == null || entityManager.unwrap(Session.class) == null) {
-            throw new NullPointerException();
+            throw new SessionOpeningException("findActiveTasks()");
         }
         return entityManager.createQuery("select task from Task task where task.isActive = true order by task.isImportant desc").getResultList();
     }
@@ -91,5 +92,17 @@ public class TaskServiceImpl implements TaskService {
         Task task = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Task", "Id", id));
         task.setImportant(!task.isImportant());
         taskRepository.save(task);
+    }
+
+    @Override
+    public boolean isAlreadyPresent(Long id, String name) {
+        if (entityManager == null || entityManager.unwrap(Session.class) == null) {
+            throw new SessionOpeningException("isAlreadyPresent(Long id, String name)");
+        }
+        return entityManager.createQuery("select task from Task task where task.name = ?1 and task.isActive = true")
+                .setParameter(1, name)
+                .getResultStream()
+                .findFirst()
+                .isPresent();
     }
 }
