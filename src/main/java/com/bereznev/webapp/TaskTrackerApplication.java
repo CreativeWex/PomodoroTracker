@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 
 @SpringBootApplication
-public class PomodoroTrackerApplication {
+public class TaskTrackerApplication {
 
     @Bean
     HiddenHttpMethodFilter hiddenHttpMethodFilter() {
@@ -14,7 +14,7 @@ public class PomodoroTrackerApplication {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(PomodoroTrackerApplication.class, args);
+        SpringApplication.run(TaskTrackerApplication.class, args);
     }
 
 }
