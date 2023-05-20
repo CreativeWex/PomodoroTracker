@@ -11,6 +11,7 @@ import com.bereznev.webapp.model.Task;
 import com.bereznev.webapp.service.TaskService;
 import com.bereznev.webapp.util.TaskValidator;
 import jakarta.validation.Valid;
+import lombok.extern.log4j.Log4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 import java.beans.PropertyEditorSupport;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
+@Log4j
 
 @Controller
 @RequestMapping("/api/v1/tasks")
@@ -37,6 +40,7 @@ public class TaskController {
 
     @GetMapping("/new")
     public String addNewTask(@ModelAttribute("task") Task task, Model model) {
+        log.debug("GET /new");
         return "tasks/new";
     }
 
@@ -47,6 +51,7 @@ public class TaskController {
             return "/tasks/new";
         }
         taskService.save(task);
+        log.debug("task saved:" + task);
         return "redirect:/api/v1/tasks";
     }
 
@@ -77,12 +82,14 @@ public class TaskController {
             taskService.save(task);
         }
         taskService.update(id, task);
+        log.debug("updated task with id:" + id);
         return "redirect:/api/v1/tasks";
     }
 
     @DeleteMapping("{id}/delete")
     public String delete(@PathVariable("id") Long id) {
         taskService.delete(id);
+        log.debug("deleted task with id: " + id);
         return "redirect:/api/v1/tasks";
     }
 
