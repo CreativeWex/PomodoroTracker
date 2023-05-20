@@ -1,7 +1,7 @@
 package com.bereznev.webapp.exception;
 /*
     =====================================
-    @project FlashCards
+    @project TaskManager
     @created 06/02/2023    
     @author Bereznev Nikita @CreativeWex
     =====================================

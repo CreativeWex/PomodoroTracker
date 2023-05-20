@@ -1,7 +1,7 @@
 package com.bereznev.webapp.model;
 /*
     =====================================
-    @project FlashCards
+    @project TaskManager
     @created 21/02/2023    
     @author Bereznev Nikita @CreativeWex
     =====================================
